@@ -1,0 +1,92 @@
+openapi: 3.0.3
+info:
+  title: Notification API - Cloud Solution
+  description: >-
+    Notification API is a native Azure cloud solution that enables
+    users/applications to send notifications through multiple channels such as
+    Email, and SMS. The solution integrates with mulitple communications
+    platforms to deliver the notifications, it provides a consisten REST API
+    interface abstracting the backend vendor/platform specifics.
+  version: 1.0.0
+tags:
+  - name: Brevo Email
+    description: Sends a transactional email through the Brevo platform
+paths:
+  /email/brevo:
+    post:
+      tags:
+        - Brevo Email
+      summary: Sends a transactional email
+      description: >-
+        Sends a transactional email using a template. USes the Brevo platform in
+        the backend
+      operationId: sendTransactionalEmail
+      requestBody:
+        description: Sends a transactional email
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionalEmail'
+      responses:
+        '201':
+          description: transactional email sent
+        '202':
+          description: transactional email scheduled
+        '400':
+          description: bad request
+        '500':
+          description: Internal Server Error
+components:
+  schemas:
+    HeadersMap:
+      type: object
+      additionalProperties:
+        type: string
+      example:
+        X-Sib-Sandbox: drop
+    Recipient:
+      type: object
+      properties:
+        email:
+          type: string
+          example: john.smith@gmail.com
+        name:
+          type: string
+          example: John Smith
+      required:
+        - email
+    TransactionalEmail:
+      type: object
+      properties:
+        headers:
+          $ref: '#/components/schemas/HeadersMap'
+          'description:': Headers map
+        to:
+          type: array
+          items:
+            $ref: '#/components/schemas/Recipient'
+        cc:
+          type: array
+          items:
+            $ref: '#/components/schemas/Recipient'
+        bcc:
+          type: array
+          items:
+            $ref: '#/components/schemas/Recipient'
+        templateId:
+          type: integer
+          example: 10
+        params:
+          type: object
+          example:
+            POLICYNUMBER: '9883773333'
+            PRIMARYADDRESS: 432 MAIN ST
+            COVERAGES:
+              - CODE: COVA
+                LIMIT: '100000'
+              - CODE: COVB
+                LIMIT: '500000'
+      required:
+        - to
+        - templateId
