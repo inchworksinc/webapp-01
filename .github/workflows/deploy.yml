@@ -2,11 +2,16 @@ name: CD
 # Controls when the workflow will run
 on:
   workflow_dispatch:
+    inputs:
+      environment:
+        required: true
+        description: Environment
+        type: string
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: prd
+    environment: ${{ inputs.environment }}
     steps:
       - uses: actions/checkout@v4
       - name: Run a one-line script
